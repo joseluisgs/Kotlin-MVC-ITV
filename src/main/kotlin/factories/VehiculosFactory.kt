@@ -1,5 +1,6 @@
 package factories
 
+import extensions.roundTo
 import models.Coche
 import models.Motocicleta
 import models.Vehiculo
@@ -29,7 +30,7 @@ class VehiculosFactory {
             matriculas.random(),
             tipos.random(),
             Random.nextBoolean(),
-            Random.nextDouble(25.0, 60.0)
+            Random.nextDouble(25.0, 60.0).roundTo(2)
         )
 
     }
@@ -45,8 +46,8 @@ class VehiculosFactory {
             modelos.random(),
             matriculas.random(),
             tipos.random(),
-            (1..2).random(),
-            Random.nextDouble(50.0, 100.0)
+            (2..5).random(),
+            Random.nextDouble(50.0, 100.0).roundTo(2)
         )
     }
 }
