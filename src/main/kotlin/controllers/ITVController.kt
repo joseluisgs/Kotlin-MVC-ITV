@@ -2,11 +2,16 @@ package controllers
 
 import errors.VehiculoException
 import factories.VehiculosFactory
+import models.LineaRevision
+import models.Operador
+import models.Revision
 import models.Vehiculo
+import repositories.RevisionesRepository
 import repositories.VehiculosRepository
 
 object ITVController {
     val vehiculosRepository = VehiculosRepository()
+    val revisionesRepository = RevisionesRepository()
 
     fun loadData() {
         val factory = VehiculosFactory()
@@ -25,7 +30,7 @@ object ITVController {
 
     fun getVehiculo(matricula: String): Vehiculo {
         return vehiculosRepository.findById(matricula)
-            ?: throw VehiculoException("Vehiculo no encontrado con matricula $matricula")
+            ?: throw VehiculoException("Vehiculo no encontrado con matricula: $matricula")
     }
 
     fun createVehiculo(vehiculo: Vehiculo): Vehiculo {
@@ -48,6 +53,11 @@ object ITVController {
     fun deleteVehiculo(matricula: String): Vehiculo {
         return vehiculosRepository.delete(matricula)
             ?: throw VehiculoException("Vehiculo no encontrado con matricula $matricula")
+    }
+
+    fun realizarRevision(operador: Operador, lineasRevision: MutableList<LineaRevision>): Revision? {
+        val revision = Revision(operador, lineasRevision)
+        return revisionesRepository.save(revision)
     }
 
 }

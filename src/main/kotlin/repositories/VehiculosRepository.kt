@@ -3,6 +3,7 @@ package repositories
 import models.Vehiculo
 
 class VehiculosRepository : CRUDRepository<Vehiculo, String> {
+    // también puedo escribirlo como vehiculos = mutableMapOf<String, Vehiculo>()
     private var vehiculos: MutableMap<String, Vehiculo> = mutableMapOf()
 
     override fun findAll(): List<Vehiculo> {
@@ -27,7 +28,7 @@ class VehiculosRepository : CRUDRepository<Vehiculo, String> {
     }
 
     override fun delete(matricula: String): Vehiculo? {
-        return vehiculos.remove(matricula) ?: return null
+        return vehiculos.remove(matricula)
     }
 
     override fun deleteAll() {

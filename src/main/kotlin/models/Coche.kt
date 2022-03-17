@@ -4,6 +4,9 @@ import extensions.roundTo
 import interfaces.IMecanica
 import models.enums.TipoMotor
 
+/**
+ * Clase Coche
+ */
 class Coche(
     marca: String,
     modelo: String,

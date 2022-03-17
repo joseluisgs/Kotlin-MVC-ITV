@@ -54,7 +54,7 @@ internal class ITVControllerTest {
         val ex = assertThrows<VehiculoException> {
             ITVController.getVehiculo(vehiculo.matricula)
         }
-        assertTrue(ex.message!!.contains("Vehiculo no encontrado con matricula ${vehiculo.matricula}"))
+        assertTrue(ex.message!!.contains("Vehiculo no encontrado con matricula: ${vehiculo.matricula}"))
     }
 
     @Test
