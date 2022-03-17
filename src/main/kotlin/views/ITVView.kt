@@ -18,6 +18,7 @@ object ITVView {
 
     fun presentacion() {
         println("Bienvenido al sistema de gestión de la empresa ITV")
+        println("****************************************************")
     }
 
     fun menu() {
@@ -34,9 +35,10 @@ object ITVView {
             6. Salir
             """.trimIndent()
             )
+            print("Seleccione una opción [1-6]: ")
             opcion = readLine() ?: ""
             if (!regex.matches(opcion)) {
-                println("Opción no válida, elija una opción del 1 al 6")
+                println("Opción no válida. Inténtelo de nuevo.")
             }
         } while (!opcion?.trim()!!.matches(regex))
 
@@ -112,7 +114,7 @@ object ITVView {
         val marca = updateMarca(vehiculo.marca)
         val modelo = updateModelo(vehiculo.modelo)
         val matricula = updateMatricula(vehiculo.matricula)
-        val motor = updateTipoMotor(vehiculo.motor, TipoVehiculo.MOTOCICLETA)
+        val motor = updateTipoMotor(vehiculo.motor, TipoVehiculo.COCHE)
         val numPlazas = updateNumPlazas(vehiculo.numPlazas)
         val precio = updatePrecio(vehiculo.precio)
         vehiculo.apply {
@@ -219,9 +221,10 @@ object ITVView {
          
             """.trimIndent()
             )
+            print("Seleccione una opción [1-3]: ")
             opcion = readLine() ?: ""
             if (!regex.matches(opcion)) {
-                println("Opción no válida, elija una opción del 1 al 3")
+                println("Opción no válida. Inténtelo de nuevo.")
             }
         } while (!opcion?.trim()!!.matches(regex))
 
