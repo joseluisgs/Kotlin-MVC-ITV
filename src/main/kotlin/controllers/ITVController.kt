@@ -23,20 +23,31 @@ object ITVController {
 
     fun getVehiculos() = vehiculosRepository.findAll()
 
-    fun getVehiculo(id: Int): Vehiculo {
-        return vehiculosRepository.findById(id) ?: throw VehiculoException("Vehiculo no encontrado con id: $id")
+    fun getVehiculo(matricula: String): Vehiculo {
+        return vehiculosRepository.findById(matricula)
+            ?: throw VehiculoException("Vehiculo no encontrado con matricula $matricula")
     }
 
     fun createVehiculo(vehiculo: Vehiculo): Vehiculo {
-        return vehiculosRepository.save(vehiculo)
+        // No se puede crear un vehiculo con una matricula que ya existe, si no excepcion
+        vehiculosRepository.findById(vehiculo.matricula) ?: return vehiculosRepository.save(vehiculo)
+        throw VehiculoException("Ya existe un vehiculo con la matricula ${vehiculo.matricula}. No se puede crear otro con la misma matricula")
     }
 
-    fun updateVehiculo(id: Int, vehiculo: Vehiculo): Vehiculo {
-        return vehiculosRepository.update(id, vehiculo) ?: throw VehiculoException("Vehiculo no encontrado con id: $id")
+    fun updateVehiculo(matricula: String, vehiculo: Vehiculo): Vehiculo {
+        // Debemos comprobar si la nueva matricula ya existe, si existe y el id es distinto, lanzar excepcion
+        // porque no me pertenece y no puedo cambiar datos de otro vehiculo
+        val vehiculoExistente = vehiculosRepository.findById(vehiculo.matricula)
+        if (vehiculoExistente != null && vehiculoExistente.id != vehiculo.id) {
+            throw VehiculoException("Ya existe un vehiculo con matricula ${vehiculo.matricula}. No puedes modificar datos de otro vehiculo")
+        }
+        return vehiculosRepository.update(matricula, vehiculo)
+            ?: throw VehiculoException("Vehiculo no encontrado con matricula $matricula")
     }
 
-    fun deleteVehiculo(id: Int): Vehiculo {
-        return vehiculosRepository.delete(id) ?: throw VehiculoException("Vehiculo no encontrado con id: $id")
+    fun deleteVehiculo(matricula: String): Vehiculo {
+        return vehiculosRepository.delete(matricula)
+            ?: throw VehiculoException("Vehiculo no encontrado con matricula $matricula")
     }
 
 }

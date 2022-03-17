@@ -72,22 +72,22 @@ object ITVView {
     }
 
     private fun modificarVehiculo() {
-        val id = readID()
+        val mat = readMatricula()
         try {
-            val vehiculo = ITVController.getVehiculo(id.toInt())
+            val vehiculo = ITVController.getVehiculo(mat)
             println("Actualizando: $vehiculo")
             println("Introduzca los nuevos datos del vehículo o pulse intro para conservar el valor actual")
             if (vehiculo is Coche) {
-                actualizarCoche(vehiculo)
+                actualizarCoche(mat, vehiculo)
             } else {
-                actualizarMoto(vehiculo as Motocicleta)
+                actualizarMoto(mat, vehiculo as Motocicleta)
             }
         } catch (e: Exception) {
             println(e.message)
         }
     }
 
-    private fun actualizarMoto(vehiculo: Motocicleta) {
+    private fun actualizarMoto(mat: String, vehiculo: Motocicleta) {
         val marca = updateMarca(vehiculo.marca)
         val modelo = updateModelo(vehiculo.modelo)
         val matricula = updateMatricula(vehiculo.matricula)
@@ -103,14 +103,14 @@ object ITVView {
             this.precio = precio
         }
         try {
-            val res = ITVController.updateVehiculo(vehiculo.id, vehiculo)
+            val res = ITVController.updateVehiculo(mat, vehiculo)
             println(res)
         } catch (e: Exception) {
             println(e.message)
         }
     }
 
-    private fun actualizarCoche(vehiculo: Coche) {
+    private fun actualizarCoche(mat: String, vehiculo: Coche) {
         val marca = updateMarca(vehiculo.marca)
         val modelo = updateModelo(vehiculo.modelo)
         val matricula = updateMatricula(vehiculo.matricula)
@@ -126,7 +126,7 @@ object ITVView {
             this.precio = precio
         }
         try {
-            val res = ITVController.updateVehiculo(vehiculo.id, vehiculo)
+            val res = ITVController.updateVehiculo(mat, vehiculo)
             println(res)
         } catch (e: Exception) {
             println(e.message)
@@ -187,9 +187,9 @@ object ITVView {
     }
 
     private fun eliminarVehiculo() {
-        val codigo = readID()
+        val mat = readMatricula()
         try {
-            val res = ITVController.deleteVehiculo(codigo.toInt())
+            val res = ITVController.deleteVehiculo(mat)
             println(res)
         } catch (e: Exception) {
             println(e.message)
@@ -198,9 +198,9 @@ object ITVView {
     }
 
     private fun consultarVehiculo() {
-        val codigo = readID()
+        val mat = readMatricula()
         try {
-            val res = ITVController.getVehiculo(codigo.toInt())
+            val res = ITVController.getVehiculo(mat)
             println(res)
         } catch (e: Exception) {
             println(e.message)

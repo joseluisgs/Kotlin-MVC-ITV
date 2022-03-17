@@ -2,28 +2,32 @@ package repositories
 
 import models.Vehiculo
 
-class VehiculosRepository : CRUDRepository<Vehiculo, Int> {
-    private var vehiculos: MutableMap<Int, Vehiculo> = mutableMapOf()
+class VehiculosRepository : CRUDRepository<Vehiculo, String> {
+    private var vehiculos: MutableMap<String, Vehiculo> = mutableMapOf()
 
     override fun findAll(): List<Vehiculo> {
         return vehiculos.values.toList()
     }
 
-    override fun findById(id: Int): Vehiculo? {
-        return vehiculos[id]
+    override fun findById(matricula: String): Vehiculo? {
+        return vehiculos[matricula]
     }
 
     override fun save(entity: Vehiculo): Vehiculo {
-        vehiculos[entity.id] = entity
+        vehiculos[entity.matricula] = entity
         return entity
     }
 
-    override fun update(id: Int, entity: Vehiculo): Vehiculo? {
-        return vehiculos.replace(id, entity)
+    override fun update(matricula: String, entity: Vehiculo): Vehiculo? {
+        // Como no se puede cambiar la clave, borro e inserto el nuevo elemento
+        // vehiculos[matricula] = entity
+        vehiculos.remove(matricula) ?: return null
+        vehiculos[entity.matricula] = entity
+        return entity
     }
 
-    override fun delete(id: Int): Vehiculo? {
-        return vehiculos.remove(id)
+    override fun delete(matricula: String): Vehiculo? {
+        return vehiculos.remove(matricula) ?: return null
     }
 
     override fun deleteAll() {

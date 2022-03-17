@@ -1,6 +1,7 @@
 package controllers
 
 import errors.VehiculoException
+import factories.VehiculosFactory
 import models.Coche
 import models.enums.TipoMotor
 import org.junit.jupiter.api.Assertions.*
@@ -35,20 +36,25 @@ internal class ITVControllerTest {
     @Test
     fun getVehiculo() {
         ITVController.createVehiculo(vehiculo)
-        val res = ITVController.getVehiculo(vehiculo.id)
+        val res = ITVController.getVehiculo(vehiculo.matricula)
         assertAll(
             { assertNotNull(res) },
-            { assertEquals(vehiculo.id, res.id) }
+            { assertEquals(vehiculo.id, res.id) },
+            { assertEquals(vehiculo.marca, res.marca) },
+            { assertEquals(vehiculo.modelo, res.modelo) },
+            { assertEquals(vehiculo.matricula, res.matricula) },
+            { assertEquals(vehiculo.motor, res.motor) },
+            { assertEquals(vehiculo.precio, res.precio) }
         )
 
     }
 
     @Test
-    fun getVehiculoException() {
+    fun getVehiculoNotExistsException() {
         val ex = assertThrows<VehiculoException> {
-            ITVController.getVehiculo(vehiculo.id)
+            ITVController.getVehiculo(vehiculo.matricula)
         }
-        assertTrue(ex.message!!.contains("Vehiculo no encontrado con id: ${vehiculo.id}"))
+        assertTrue(ex.message!!.contains("Vehiculo no encontrado con matricula ${vehiculo.matricula}"))
     }
 
     @Test
@@ -65,8 +71,18 @@ internal class ITVControllerTest {
     }
 
     @Test
+    fun createVehiculoOtherException() {
+        ITVController.createVehiculo(vehiculo)
+        val ex = assertThrows<VehiculoException> {
+            ITVController.createVehiculo(vehiculo)
+        }
+        assertTrue(ex.message!!.contains("Ya existe un vehiculo con la matricula ${vehiculo.matricula}. No se puede crear otro con la misma matricula"))
+    }
+
+    @Test
     fun updateVehiculo() {
         val vh = ITVController.createVehiculo(vehiculo)
+        val mat = vehiculo.matricula
         vh.apply {
             marca = "marcaModificada"
             modelo = "modeloModificado"
@@ -74,7 +90,7 @@ internal class ITVControllerTest {
             motor = TipoMotor.DIESEL
         }
 
-        val res = ITVController.updateVehiculo(vh.id, vh)
+        val res = ITVController.updateVehiculo(mat, vh)
         assertAll(
             { assertNotNull(res) },
             { assertEquals(vehiculo.id, res.id) },
@@ -86,17 +102,33 @@ internal class ITVControllerTest {
     }
 
     @Test
-    fun updateVehiculoException() {
+    fun updateVehiculoNotExistsException() {
         val ex = assertThrows<VehiculoException> {
-            ITVController.updateVehiculo(vehiculo.id, vehiculo)
+            ITVController.updateVehiculo(vehiculo.matricula, vehiculo)
         }
-        assertTrue(ex.message!!.contains("Vehiculo no encontrado con id: ${vehiculo.id}"))
+        assertTrue(ex.message!!.contains("Vehiculo no encontrado con matricula ${vehiculo.matricula}"))
+    }
+
+    @Test
+    fun updateVehiculoUpdateOtherException() {
+        val factory = VehiculosFactory()
+        val v1 = factory.getVehiculo()
+        val v2 = factory.getVehiculo()
+        ITVController.createVehiculo(v1)
+        ITVController.createVehiculo(v2)
+        val mat = v2.matricula
+        v2.matricula = v1.matricula
+
+        val ex = assertThrows<VehiculoException> {
+            ITVController.updateVehiculo(mat, v2)
+        }
+        assertTrue(ex.message!!.contains("Ya existe un vehiculo con matricula ${v2.matricula}. No puedes modificar datos de otro vehiculo"))
     }
 
     @Test
     fun deleteVehiculo() {
         val vh = ITVController.createVehiculo(vehiculo)
-        val res = ITVController.deleteVehiculo(vehiculo.id)
+        val res = ITVController.deleteVehiculo(vehiculo.matricula)
         assertAll(
             { assertEquals(vh.id, res.id) },
             { assertEquals(vh.marca, res.marca) },
@@ -107,10 +139,10 @@ internal class ITVControllerTest {
     }
 
     @Test
-    fun deleteVehiculoException() {
+    fun deleteVehiculoNotExistsException() {
         val ex = assertThrows<VehiculoException> {
-            ITVController.deleteVehiculo(vehiculo.id)
+            ITVController.deleteVehiculo(vehiculo.matricula)
         }
-        assertTrue(ex.message!!.contains("Vehiculo no encontrado con id: ${vehiculo.id}"))
+        assertTrue(ex.message!!.contains("Vehiculo no encontrado con matricula ${vehiculo.matricula}"))
     }
 }
