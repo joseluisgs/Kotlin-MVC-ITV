@@ -16,6 +16,10 @@ dependencies {
     testImplementation(kotlin("test"))
 }
 
+application {
+    mainClass.set("MainKt")
+}
+
 tasks.test {
     useJUnitPlatform()
 }
@@ -24,6 +28,13 @@ tasks.withType<KotlinCompile> {
     kotlinOptions.jvmTarget = "11"
 }
 
-application {
-    mainClass.set("MainKt")
+// Creamos un jar
+tasks.jar {
+    manifest {
+        attributes["Main-Class"] = "MainKt"
+    }
+    configurations["compileClasspath"].forEach { file: File ->
+        from(zipTree(file.absoluteFile))
+    }
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
 }

@@ -4,6 +4,9 @@ import extensions.roundTo
 import interfaces.IMecanica
 import models.enums.TipoMotor
 
+/**
+ * Clase que representa una motocicleta
+ */
 class Motocicleta(
     marca: String,
     modelo: String,
