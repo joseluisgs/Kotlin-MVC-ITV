@@ -55,8 +55,13 @@ object ITVController {
             ?: throw VehiculoException("Vehiculo no encontrado con matricula $matricula")
     }
 
-    fun realizarRevision(operador: Operador, lineasRevision: MutableList<LineaRevision>): Revision? {
-        val revision = Revision(operador, lineasRevision)
+    fun realizarRevision(operador: Operador, vehiculos: MutableList<Vehiculo>): Revision? {
+        val lineas = mutableListOf<LineaRevision>()
+        for (vehiculo in vehiculos) {
+            val linea = LineaRevision(vehiculo)
+            lineas.add(linea)
+        }
+        val revision = Revision(operador, lineas)
         return revisionesRepository.save(revision)
     }
 

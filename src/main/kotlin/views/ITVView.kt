@@ -4,7 +4,10 @@ import comparators.VehiculoPorCreatedAtComparator
 import comparators.VehiculoPorMarcaComparator
 import comparators.VehiculoPorTipoComparator
 import controllers.ITVController
-import models.*
+import models.Coche
+import models.Motocicleta
+import models.Operador
+import models.Vehiculo
 import models.enums.TipoVehiculo
 import views.inputs.*
 import kotlin.system.exitProcess
@@ -66,11 +69,11 @@ object ITVView {
         val operador = Operador("Pepe", "pepe@prueba.com")
         println("Le atiende el operador: $operador")
 
-        val lineasRevision = inputLineasRevision()
+        val vehiculos = inputLineasRevision()
 
         try {
             // Realizamos la revisión
-            val res = ITVController.realizarRevision(operador, lineasRevision)
+            val res = ITVController.realizarRevision(operador, vehiculos)
             println("La revisión se ha realizado correctamente.")
             println(res)
         } catch (e: Exception) {
@@ -78,8 +81,8 @@ object ITVView {
         }
     }
 
-    private fun inputLineasRevision(): MutableList<LineaRevision> {
-        val lineas = mutableListOf<LineaRevision>()
+    private fun inputLineasRevision(): MutableList<Vehiculo> {
+        val lineas = mutableListOf<Vehiculo>()
         var correcto = false
         do {
             print("Introduzca las matriculas de los vehículos a revisar separada por comas: ")
@@ -88,7 +91,7 @@ object ITVView {
             for (matricula in matriculas) {
                 try {
                     val vehiculo = ITVController.getVehiculo(matricula.trim().uppercase())
-                    lineas.add(LineaRevision(vehiculo))
+                    lineas.add(vehiculo)
                 } catch (e: Exception) {
                     println(e.message)
                 }
