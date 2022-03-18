@@ -28,31 +28,39 @@ object ITVController {
 
     fun getVehiculos() = vehiculosRepository.findAll()
 
-    fun getVehiculo(matricula: String): Vehiculo {
-        return vehiculosRepository.findById(matricula)
+    fun getVehiculoByMatricula(matricula: String): Vehiculo {
+        return vehiculosRepository.findByMat(matricula)
             ?: throw VehiculoException("Vehiculo no encontrado con matricula: $matricula")
+    }
+
+    fun getVehiculoById(id: Int): Vehiculo {
+        return vehiculosRepository.findById(id)
+            ?: throw VehiculoException("Vehiculo no encontrado con id: $id")
     }
 
     fun createVehiculo(vehiculo: Vehiculo): Vehiculo {
         // No se puede crear un vehiculo con una matricula que ya existe, si no excepcion
-        vehiculosRepository.findById(vehiculo.matricula) ?: return vehiculosRepository.save(vehiculo)
+        vehiculosRepository.findByMat(vehiculo.matricula) ?: return vehiculosRepository.save(vehiculo)
         throw VehiculoException("Ya existe un vehiculo con la matricula ${vehiculo.matricula}. No se puede crear otro con la misma matricula")
     }
 
-    fun updateVehiculo(matricula: String, vehiculo: Vehiculo): Vehiculo {
+    fun updateVehiculo(id: Int, vehiculo: Vehiculo): Vehiculo {
         // Debemos comprobar si la nueva matricula ya existe, si existe y el id es distinto, lanzar excepcion
         // porque no me pertenece y no puedo cambiar datos de otro vehiculo
-        val vehiculoExistente = vehiculosRepository.findById(vehiculo.matricula)
-        if (vehiculoExistente != null && vehiculoExistente.id != vehiculo.id) {
+        val vehiculoExistente = vehiculosRepository.findByMat(vehiculo.matricula)
+            ?: throw throw VehiculoException("Vehiculo no encontrado con id: $id")
+
+        if (vehiculoExistente != null && vehiculoExistente.id != id) {
             throw VehiculoException("Ya existe un vehiculo con matricula ${vehiculo.matricula}. No puedes modificar datos de otro vehiculo")
         }
-        return vehiculosRepository.update(matricula, vehiculo)
-            ?: throw VehiculoException("Vehiculo no encontrado con matricula $matricula")
+        return vehiculosRepository.update(id, vehiculo)
+            ?: throw VehiculoException("Vehiculo no encontrado con id: $id")
     }
 
     fun deleteVehiculo(matricula: String): Vehiculo {
-        return vehiculosRepository.delete(matricula)
-            ?: throw VehiculoException("Vehiculo no encontrado con matricula $matricula")
+        val vehiculo = vehiculosRepository.findByMat(matricula)
+            ?: throw VehiculoException("Vehiculo no encontrado con matricula: $matricula")
+        return vehiculosRepository.delete(vehiculo.id)!!
     }
 
     fun realizarRevision(operador: Operador, vehiculos: MutableList<Vehiculo>): Revision? {
