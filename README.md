@@ -1,5 +1,5 @@
 # Kotlin-MVC-ITV
-Proyecto que trabajaremos a lo largo del curso en Kotlin. Ejemplo de como organizar tu código usando MVC y algunos patrones vistos en clase. Uso docente
+Proyecto que trabajaremos a lo largo del curso en Kotlin. Ejemplo de como organizar tu código usando MVC y algunos patrones vistos en clase. Uso docente.
 
 [![Kotlin](https://img.shields.io/badge/Code-Kotlin-blueviolet)](https://kotlinlang.org/)
 [![LISENCE](https://img.shields.io/badge/Lisence-MIT-green)]()
@@ -15,7 +15,7 @@ Proyecto que trabajaremos a lo largo del curso en Kotlin. Ejemplo de como organi
 
 ## Acerca de
 
-Este proyecto tiene como objetivo aplicar una serie de patrones de diseño y arquitectura en Kotlin, siguiendo los apuntes y proyectos de ejemplo de P[rogramación de 1DAM](https://github.com/joseluisgs/Programacion-00-2021-2022). 
+Este proyecto tiene como objetivo aplicar una serie de patrones de diseño y arquitectura en Kotlin, siguiendo los apuntes y proyectos de ejemplo de [Programación de 1DAM](https://github.com/joseluisgs/Programacion-00-2021-2022). 
 
 A lo largo de las distintas ramas iremos aplicando técnicas, librerías y organizaremos el código según lo visto en clase pero usando el lenguaje Kotlin y no Java.
 
