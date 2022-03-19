@@ -1,8 +1,12 @@
 package models
 
+import extensions.roundTo
 import interfaces.IMecanica
 import models.enums.TipoMotor
 
+/**
+ * Clase que representa una motocicleta
+ */
 class Motocicleta(
     marca: String,
     modelo: String,
@@ -27,11 +31,10 @@ class Motocicleta(
 
     override fun toString(): String {
         return "Motocicleta(id=$id, marca=$marca, modelo=$modelo, matricula=$matricula, motor=$motor, precio=${
-            String.format(
-                "%.2f",
-                precio
+            precio.roundTo(
+                2
             )
-        } createdAt=$createdAt, carenado=$carenado, velocidad=$velocidad)"
+        }, carenado=$carenado, velocidad=$velocidad)"
     }
 
 

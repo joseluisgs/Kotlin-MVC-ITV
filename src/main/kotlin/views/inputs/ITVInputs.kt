@@ -5,10 +5,10 @@ import models.enums.TipoVehiculo
 
 fun readID(): String {
     val regex = "\\d+".toRegex() // Es equivalente a Regex("\\d+")
-    println("Introduzca el código del vehículo que desea consultar")
     var codigo = ""
     do {
-        codigo = readLine() ?: ""
+        print("Introduzca el código del vehículo que desea consultar: ")
+        codigo = readln()
         if (!codigo.matches(regex)) {
             println("El código id debe ser un número entero")
         }
@@ -17,23 +17,23 @@ fun readID(): String {
 }
 
 fun readMarca(): String {
-    println("Introduzca la marca: ")
+    print("Introduzca la marca: ")
     return readln().trim()
 }
 
 fun updateMarca(marca: String): String {
-    println("Introduzca la nueva marca [$marca]: ")
+    print("Introduzca la nueva marca [$marca]: ")
     val newMarca = readln()
     return if (newMarca.isNotEmpty()) newMarca.trim() else marca
 }
 
 fun readModelo(): String {
-    println("Introduzca el modelo: ")
+    print("Introduzca el modelo: ")
     return readln().trim()
 }
 
 fun updateModelo(modelo: String): String {
-    println("Introduzca el nuevo modelo [$modelo]: ")
+    print("Introduzca el nuevo modelo [$modelo]: ")
     val newModelo = readln()
     return if (newModelo.isNotEmpty()) newModelo.trim() else modelo
 }
@@ -53,7 +53,7 @@ fun readTipoMotor(tipoVehiculo: TipoVehiculo): TipoMotor {
     var tipo: String? = null
 
     do {
-        println("Introduzca el tipo de motor ${listTipos}: ")
+        print("Introduzca el tipo de motor ${listTipos}: ")
         tipo = readln().trim().uppercase()
     } while (!listTipos.contains(tipo))
     return TipoMotor.valueOf(tipo!!)
@@ -74,7 +74,7 @@ fun updateTipoMotor(tipoMotor: TipoMotor, tipoVehiculo: TipoVehiculo): TipoMotor
 
     do {
         println("Introduzca el tipo de motor ${listTipos}: ")
-        println("Motor actual [${tipoMotor.name}]")
+        print("Motor actual [${tipoMotor.name}]: ")
         tipo = readln().trim().uppercase()
         if (tipo.isEmpty()) {
             tipo = tipoMotor.name
@@ -87,7 +87,7 @@ fun readNumPlazas(): Int {
     val regex = Regex("[2-5]")
     var num: String = ""
     do {
-        println("Introduzca el número de plazas [2-5]: ")
+        print("Introduzca el número de plazas [2-5]: ")
         num = readln().trim()
     } while (!num.matches(regex))
     return num.toInt()
@@ -98,7 +98,7 @@ fun updateNumPlazas(numPlazas: Int): Int {
     var num: String = ""
     do {
         println("Introduzca el nuevo número de plazas [2-5]: ")
-        println("Num plazas actuales: [$numPlazas]")
+        print("Num plazas actuales [$numPlazas]: ")
         num = readln().trim()
         if (num.isEmpty()) {
             num = numPlazas.toString()
@@ -111,7 +111,7 @@ fun readMatricula(): String {
     val regex = "[A-Z][0-9]{5}|[0-9]{4}[A-Z]{3}".toRegex()
     var mat: String = ""
     do {
-        println("Introduzca la matrícula [LNNNNN] o [NNNNLLL]: ")
+        print("Introduzca la matrícula [LNNNNN] o [NNNNLLL]: ")
         mat = readln().trim().uppercase()
     } while (!mat.matches(regex))
     return mat
@@ -122,7 +122,7 @@ fun updateMatricula(matricula: String): String {
     var mat: String = ""
     do {
         println("Introduzca la matrícula [LNNNNN] o [NNNNLLL]: ")
-        println("Matricula actual [$matricula]")
+        print("Matricula actual [$matricula]: ")
         mat = readln().trim().uppercase()
         if (mat.isEmpty()) {
             mat = matricula
@@ -134,7 +134,7 @@ fun updateMatricula(matricula: String): String {
 fun readCarenado(): Boolean {
     var carenado: String? = null
     do {
-        println("¿Tiene carenado? [S/N]: ")
+        print("¿Tiene carenado? [S/N]: ")
         carenado = readln().trim().uppercase()
     } while (carenado != "S" && carenado != "N")
     return carenado == "S"
@@ -144,7 +144,7 @@ fun updateCarenado(carenado: Boolean): Boolean {
     var care: String? = null
     do {
         println("¿Tiene carenado? [S/N]: ")
-        println("Carenado actual [${if (carenado) "S" else "N"}]")
+        print("Carenado actual [${if (carenado) "S" else "N"}]: ")
         care = readln().trim().uppercase()
         if (care.isEmpty()) {
             care = if (carenado) "S" else "N"
@@ -154,25 +154,41 @@ fun updateCarenado(carenado: Boolean): Boolean {
 }
 
 fun readPrecio(): Double {
-    val regex = """^[0-9]\d+\.\d{2}$""".toRegex()
+    val regex = """^[0-9]\d+\.\d{1,2}${'$'}""".toRegex()
     var precio: String = ""
     do {
-        println("Introduzca el precio [Ej: 45.56]: ")
+        print("Introduzca el precio [Ej: NN.DD]: ")
         precio = readln().trim()
     } while (!precio.matches(regex))
     return precio.toDouble()
 }
 
 fun updatePrecio(precio: Double): Double {
-    val regex = """^[0-9]\d+\.\d{2}$""".toRegex()
-    var precio: String = ""
+    val regex = """^[0-9]\d+\.\d{1,2}${'$'}""".toRegex()
+    var pre: String = ""
     do {
-        println("Introduzca el precio [Ej: 45.56]: ")
-        println("Precio actual [$precio]")
-        precio = readln().trim()
-        if (precio.isEmpty()) {
-            precio = precio.toString()
+        println("Introduzca el precio [Ej: NN.DD]: ")
+        print(
+            "Precio actual [$precio]: "
+        )
+        pre = readln().trim()
+        if (pre.isEmpty()) {
+            pre = precio.toString()
         }
-    } while (!precio.matches(regex))
-    return precio.toDouble()
+    } while (!pre.matches(regex))
+    return pre.toDouble()
+}
+
+fun readConfirmacion(): Boolean {
+
+    val regex = "[S|N]".toRegex()
+    var opcion: String? = null
+    do {
+        print("[S/N]: ")
+        opcion = readln().uppercase()
+        if (!opcion.matches(regex)) {
+            println("Opción no válida")
+        }
+    } while (!opcion?.trim()!!.matches(regex))
+    return opcion == "S"
 }

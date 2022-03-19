@@ -6,6 +6,7 @@ import comparators.VehiculoPorTipoComparator
 import controllers.ITVController
 import models.Coche
 import models.Motocicleta
+import models.Operador
 import models.Vehiculo
 import models.enums.TipoVehiculo
 import views.inputs.*
@@ -18,10 +19,11 @@ object ITVView {
 
     fun presentacion() {
         println("Bienvenido al sistema de gestión de la empresa ITV")
+        println("****************************************************")
     }
 
     fun menu() {
-        val regex = "[1-6]".toRegex() // Es equivalente a Regex("[1-6]")
+        val regex = "[1-7]".toRegex() // Es equivalente a Regex("[1-6]")
         var opcion: String? = null
         do {
             println(
@@ -31,48 +33,84 @@ object ITVView {
             3. Añadir Vehículo
             4. Modificar Vehículo
             5. Eliminar Vehículo
-            6. Salir
+            6. Realizar Revisión
+            7. Salir
             """.trimIndent()
             )
+            print("Seleccione una opción [1-7]: ")
             opcion = readLine() ?: ""
             if (!regex.matches(opcion)) {
-                println("Opción no válida, elija una opción del 1 al 6")
+                println("Opción no válida. Inténtelo de nuevo.")
             }
         } while (!opcion?.trim()!!.matches(regex))
 
         when (opcion) {
-            "1" -> {
-                println("Listar Vehículos")
-                listarVehiculos()
-            }
-            "2" -> {
-                println("Consultar Vehículo")
-                consultarVehiculo()
-            }
-            "3" -> {
-                println("Añadir Vehículo")
-                crearVehiculo()
-            }
-            "4" -> {
-                println("Modificar Vehículo")
-                modificarVehiculo()
-            }
-            "5" -> {
-                println("Eliminar Vehículo")
-                eliminarVehiculo()
-            }
-            "6" -> {
-                println("Adiós")
-                exitProcess(0)
-            }
+            "1" -> listarVehiculos()
+            "2" -> consultarVehiculo()
+            "3" -> crearVehiculo()
+            "4" -> modificarVehiculo()
+            "5" -> eliminarVehiculo()
+            "6" -> realizarRevision()
+            "7" -> salir()
         }
         menu()
     }
 
-    private fun modificarVehiculo() {
-        val id = readID()
+    private fun salir() {
+        println("Gracias por utilizar el sistema de gestión de la ITV")
+        exitProcess(0)
+    }
+
+
+    private fun realizarRevision() {
+        println("Realizar Revisión")
+        // No me apetece hacer mas factiries o entrada de datos para el operador.
+        // Voy a suponer que como se ha logueado el operador, es el mismo que realiza la revisión y sus datos ya están cargados.
+        val operador = Operador("Pepe", "pepe@prueba.com")
+        println("Le atiende el operador: $operador")
+
+        val vehiculos = inputLineasRevision()
+
         try {
-            val vehiculo = ITVController.getVehiculo(id.toInt())
+            // Realizamos la revisión
+            val res = ITVController.realizarRevision(operador, vehiculos)
+            println("La revisión se ha realizado correctamente.")
+            println(res)
+        } catch (e: Exception) {
+            println(e.message)
+        }
+    }
+
+    private fun inputLineasRevision(): MutableList<Vehiculo> {
+        val lineas = mutableListOf<Vehiculo>()
+        var correcto = false
+        do {
+            print("Introduzca las matriculas de los vehículos a revisar separada por comas: ")
+            val matriculas = readln().split(",")
+            // revisamos que las matriculas introducidas existan
+            for (matricula in matriculas) {
+                try {
+                    val vehiculo = ITVController.getVehiculoByMatricula(matricula.trim().uppercase())
+                    lineas.add(vehiculo)
+                } catch (e: Exception) {
+                    println(e.message)
+                }
+            }
+            // Si salimos de aqui es que todo es correcto
+            if (lineas.isEmpty()) {
+                println("No se han introducido matriculas válidas. Vuelva a intentarlo.")
+            } else {
+                correcto = true
+            }
+        } while (!correcto)
+        return lineas
+    }
+
+    private fun modificarVehiculo() {
+        println("Modificar Vehículo")
+        val mat = readMatricula()
+        try {
+            val vehiculo = ITVController.getVehiculoByMatricula(mat)
             println("Actualizando: $vehiculo")
             println("Introduzca los nuevos datos del vehículo o pulse intro para conservar el valor actual")
             if (vehiculo is Coche) {
@@ -102,7 +140,7 @@ object ITVView {
         }
         try {
             val res = ITVController.updateVehiculo(vehiculo.id, vehiculo)
-            println(res)
+            println("Motocicleta actualizada: $res")
         } catch (e: Exception) {
             println(e.message)
         }
@@ -112,7 +150,7 @@ object ITVView {
         val marca = updateMarca(vehiculo.marca)
         val modelo = updateModelo(vehiculo.modelo)
         val matricula = updateMatricula(vehiculo.matricula)
-        val motor = updateTipoMotor(vehiculo.motor, TipoVehiculo.MOTOCICLETA)
+        val motor = updateTipoMotor(vehiculo.motor, TipoVehiculo.COCHE)
         val numPlazas = updateNumPlazas(vehiculo.numPlazas)
         val precio = updatePrecio(vehiculo.precio)
         vehiculo.apply {
@@ -125,13 +163,14 @@ object ITVView {
         }
         try {
             val res = ITVController.updateVehiculo(vehiculo.id, vehiculo)
-            println(res)
+            println("Coche actualizado: $res")
         } catch (e: Exception) {
             println(e.message)
         }
     }
 
     private fun crearVehiculo() {
+        println("Añadir Vehículo")
         // Elegir si es coche o motocicleta
         println("¿Es un coche [1] o una motocicleta [2]?")
         val regex = "[1-2]".toRegex() // Es equivalente a Regex("[1-2]")
@@ -143,12 +182,8 @@ object ITVView {
             }
         } while (!opcion?.trim()!!.matches(regex))
         when (opcion) {
-            "1" -> {
-                crearCoche()
-            }
-            "2" -> {
-                crearMotocicleta()
-            }
+            "1" -> crearCoche()
+            "2" -> crearMotocicleta()
         }
     }
 
@@ -178,17 +213,23 @@ object ITVView {
         val coche = Coche(marca, modelo, matricula, motor, numPlazas, precio)
         try {
             val res = ITVController.createVehiculo(coche)
-            println(res)
+            println("Vehículo creado: $res")
         } catch (e: Exception) {
             println(e.message)
         }
     }
 
     private fun eliminarVehiculo() {
-        val codigo = readID()
+        println("Eliminar Vehículo")
+        val mat = readMatricula()
+        // pedimos confirmacion
+        println("¿Está seguro de que desea eliminar el vehículo con matrícula $mat?")
+        val opcion = readConfirmacion()
         try {
-            val res = ITVController.deleteVehiculo(codigo.toInt())
-            println(res)
+            if (opcion) {
+                val res = ITVController.deleteVehiculo(mat)
+                println("Vehículo eliminado: $res")
+            }
         } catch (e: Exception) {
             println(e.message)
         }
@@ -196,16 +237,18 @@ object ITVView {
     }
 
     private fun consultarVehiculo() {
-        val codigo = readID()
+        println("Consultar Vehículo")
+        val mat = readMatricula()
         try {
-            val res = ITVController.getVehiculo(codigo.toInt())
-            println(res)
+            val res = ITVController.getVehiculoByMatricula(mat)
+            println("Vehículo encontrado: $res")
         } catch (e: Exception) {
             println(e.message)
         }
     }
 
     private fun listarVehiculos() {
+        println("Listar Vehículos")
         val vehiculos = ITVController.getVehiculos()
         val regex = "[1-3]".toRegex() // Es equivalente a Regex("[1-6]")
         var opcion: String? = null
@@ -219,23 +262,19 @@ object ITVView {
          
             """.trimIndent()
             )
+            print("Seleccione una opción [1-3]: ")
             opcion = readLine() ?: ""
             if (!regex.matches(opcion)) {
-                println("Opción no válida, elija una opción del 1 al 3")
+                println("Opción no válida. Inténtelo de nuevo.")
             }
         } while (!opcion?.trim()!!.matches(regex))
 
         when (opcion) {
-            "1" -> {
-                res = vehiculos.sortedWith(VehiculoPorTipoComparator())
-            }
-            "2" -> {
-                res = vehiculos.sortedWith(VehiculoPorMarcaComparator())
-            }
-            "3" -> {
-                res = vehiculos.sortedWith(VehiculoPorCreatedAtComparator())
-            }
+            "1" -> res = vehiculos.sortedWith(VehiculoPorTipoComparator())
+            "2" -> res = vehiculos.sortedWith(VehiculoPorMarcaComparator())
+            "3" -> res = vehiculos.sortedWith(VehiculoPorCreatedAtComparator())
         }
+        println("Vehículos encontrados: ${res.size}")
         for (vehiculo in res) {
             println(vehiculo)
         }
