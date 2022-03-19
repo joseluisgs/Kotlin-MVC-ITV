@@ -8,7 +8,7 @@ fun readID(): String {
     var codigo = ""
     do {
         print("Introduzca el código del vehículo que desea consultar: ")
-        codigo = readLine() ?: ""
+        codigo = readln()
         if (!codigo.matches(regex)) {
             println("El código id debe ser un número entero")
         }
@@ -177,4 +177,18 @@ fun updatePrecio(precio: Double): Double {
         }
     } while (!pre.matches(regex))
     return pre.toDouble()
+}
+
+fun readConfirmacion(): Boolean {
+
+    val regex = "[S|N]".toRegex()
+    var opcion: String? = null
+    do {
+        print("[S/N]: ")
+        opcion = readln().uppercase()
+        if (!opcion.matches(regex)) {
+            println("Opción no válida")
+        }
+    } while (!opcion?.trim()!!.matches(regex))
+    return opcion == "S"
 }
